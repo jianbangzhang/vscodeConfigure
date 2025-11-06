@@ -1,0 +1,332 @@
+" ============================================================================
+" Ubuntu 22.04 Vim 系统级 IDE 配置
+" ============================================================================
+
+set nocompatible
+filetype plugin indent on
+syntax on
+
+" 编码
+set encoding=utf-8
+set fileencodings=utf-8,gbk,gb2312,cp936
+
+" 外观
+set number relativenumber
+set cursorline
+set showcmd wildmenu
+set laststatus=2 ruler
+set scrolloff=5
+set signcolumn=yes
+set colorcolumn=80,120
+set list listchars=tab:→\ ,trail:·,extends:⟩,precedes:⟨
+
+" 编辑
+set tabstop=4 shiftwidth=4 expandtab
+set autoindent smartindent
+set backspace=indent,eol,start
+set nowrap linebreak
+
+" 搜索
+set hlsearch incsearch ignorecase smartcase
+set path+=**
+
+" 性能优化
+set updatetime=100
+set timeoutlen=500
+set lazyredraw
+set ttyfast
+set synmaxcol=300
+set regexpengine=1
+set redrawtime=1000
+
+" 文件
+set autoread hidden
+set nobackup nowritebackup noswapfile
+set undofile undodir=~/.vim/undo//
+
+" 分割
+set splitright splitbelow
+
+" 折叠
+set foldmethod=syntax foldlevelstart=99
+
+" ==================== 鼠标复制到系统剪贴板 ====================
+" 1. 启用鼠标（所有模式）
+set mouse=a
+
+" 2. 视觉模式下选中后自动复制到 + 寄存器（系统剪贴板）
+"    按 v / V / Ctrl-v 进入视觉模式，选中文字后松开鼠标即复制
+augroup mouse_yank
+  autocmd!
+  autocmd TextYankPost * if v:event.visual | call system('xclip -selection clipboard', @") | endif
+augroup END
+
+" 3. （可选）让鼠标左键拖拽直接进入视觉模式并复制
+vnoremap <LeftRelease> "+y
+
+" ============================================================================
+" 插件管理
+" ============================================================================
+call plug#begin('~/.vim/plugged')
+
+" 文件树
+Plug 'preservim/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+
+" 标签与导航
+Plug 'majutsushi/tagbar'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'skywind3000/gutentags_plus'
+
+" 模糊搜索
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" 补全引擎
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" 调试器
+Plug 'puremourning/vimspector'
+
+" 汇编支持
+Plug 'shirk/vim-gas'
+Plug 'ARM9/arm-syntax-vim'
+
+" Git 集成
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+" 编辑增强
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'jiangmiao/auto-pairs'
+Plug 'godlygeek/tabular'
+
+" 语法高亮
+Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'pboettch/vim-cmake-syntax'
+
+" 终端
+Plug 'voldikss/vim-floaterm'
+
+" 主题
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'morhetz/gruvbox'
+Plug 'ryanoasis/vim-devicons'
+Plug 'Yggdroot/indentLine'
+
+" 工具
+Plug 'easymotion/vim-easymotion'
+Plug 'mhinz/vim-startify'
+Plug 'liuchengxu/vim-which-key'
+
+call plug#end()
+
+" ============================================================================
+" 主题
+" ============================================================================
+colorscheme gruvbox
+set background=dark
+let g:gruvbox_contrast_dark = 'hard'
+let g:airline_theme = 'gruvbox'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+
+" ============================================================================
+" Leader 键
+" ============================================================================
+let mapleader = ","
+let maplocalleader = "\\"
+
+" ============================================================================
+" 基础快捷键
+" ============================================================================
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :q<CR>
+nnoremap <leader>x :x<CR>
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+nnoremap <M-h> :vertical resize -5<CR>
+nnoremap <M-l> :vertical resize +5<CR>
+nnoremap <leader>bn :bnext<CR>
+nnoremap <leader>bp :bprevious<CR>
+nnoremap <leader>bd :bdelete<CR>
+nnoremap <leader><space> :nohlsearch<CR>
+
+" ============================================================================
+" 鼠标支持（添加到你的 vimrc）
+" ============================================================================
+
+" 启用所有模式的鼠标支持
+set mouse=a
+
+" 鼠标设置
+set mousemodel=popup_setpos  " 右键弹出菜单
+set mousehide                " 输入时隐藏鼠标
+
+" === IDE 风格的鼠标操作 ===
+
+" Ctrl + 左键：跳转到定义
+nnoremap <C-LeftMouse> <LeftMouse><Plug>(coc-definition)
+inoremap <C-LeftMouse> <Esc><LeftMouse><Plug>(coc-definition)
+
+" 双击：跳转到定义
+nnoremap <2-LeftMouse> <Plug>(coc-definition)
+
+" Ctrl + 右键：返回
+nnoremap <C-RightMouse> <C-o>
+
+" 右键：显示上下文菜单（可选）
+nnoremap <RightMouse> :call ShowContextMenu()<CR>
+
+" Alt + 左键：查看引用
+nnoremap <M-LeftMouse> <LeftMouse><Plug>(coc-references)
+
+" 中键：查看文档
+nnoremap <MiddleMouse> :call ShowDocumentation()<CR>
+
+" === 鼠标滚轮优化 ===
+" 更平滑的滚动
+nnoremap <ScrollWheelUp> 3<C-y>
+nnoremap <ScrollWheelDown> 3<C-e>
+
+" 上下文菜单函数
+function! ShowContextMenu()
+  popup_menu(['跳转到定义 (gd)', '查看引用 (gr)', '查看文档 (K)', '返回 (Ctrl-o)'], #{
+    \ callback: 'ContextMenuCallback',
+    \ })
+endfunction
+
+function! ContextMenuCallback(id, result)
+  if a:result == 1
+    call CocAction('jumpDefinition')
+  elseif a:result == 2
+    call CocAction('jumpReferences')
+  elseif a:result == 3
+    call ShowDocumentation()
+  elseif a:result == 4
+    execute "normal! \<C-o>"
+  endif
+endfunction
+
+
+" ============================================================================
+" NERDTree
+" ============================================================================
+nnoremap <leader>e :NERDTreeToggle<CR>
+nnoremap <leader>t :term<CR>cd <C-r>+<CR>
+nnoremap <leader>f :NERDTreeFind<CR>
+let NERDTreeShowHidden=1
+let NERDTreeIgnore=['\.git$', '\.o$', '\.a$', '__pycache__']
+let g:NERDTreeWinSize=35
+
+" ============================================================================
+" FZF
+" ============================================================================
+nnoremap <C-p> :Files<CR>
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>g :Rg<CR>
+let g:fzf_layout = { 'down': '~40%' }
+
+" ============================================================================
+" CoC 配置（使用 clangd）
+" ============================================================================
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nnoremap <silent> K :call ShowDocumentation()<CR>
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+" ============================================================================
+" Vimspector 调试配置（使用 GDB）
+" ============================================================================
+let g:vimspector_enable_mappings = 'HUMAN'
+let g:vimspector_install_gadgets = [ 'debugpy', 'vscode-cpptools' ]
+
+" 调试快捷键
+nnoremap <F5>  :call vimspector#Continue()<CR>
+nnoremap <F9>  :call vimspector#ToggleBreakpoint()<CR>
+nnoremap <F10> :call vimspector#StepOver()<CR>
+nnoremap <F11> :call vimspector#StepInto()<CR>
+nnoremap <F12> :call vimspector#StepOut()<CR>
+nnoremap <leader>dr :VimspectorReset<CR>
+nnoremap <leader>de :VimspectorEval<CR>
+nnoremap <leader>dw :VimspectorWatch<CR>
+
+" ============================================================================
+" Floaterm 终端集成
+" ============================================================================
+let g:floaterm_width = 0.9
+let g:floaterm_height = 0.9
+nnoremap <leader>tt :FloatermToggle<CR>
+nnoremap <leader>tn :FloatermNew<CR>
+
+" 编译运行
+nnoremap <leader>cc :FloatermNew --autoclose=0 make<CR>
+nnoremap <leader>cr :FloatermNew --autoclose=0 ./build/main<CR>
+
+" 调试
+nnoremap <leader>tg :FloatermNew --name=gdb gdb ./build/main<CR>
+
+" 性能分析
+nnoremap <leader>pf :FloatermNew perf record -g ./build/main<CR>
+nnoremap <leader>pr :FloatermNew perf report<CR>
+nnoremap <leader>ps :FloatermNew perf stat ./build/main<CR>
+
+" 内存检查
+nnoremap <leader>vm :FloatermNew valgrind --leak-check=full --show-leak-kinds=all ./build/main<CR>
+nnoremap <leader>vh :FloatermNew valgrind --tool=helgrind ./build/main<CR>
+
+" 汇编查看
+nnoremap <leader>sa :FloatermNew objdump -d -M intel -S ./build/main<CR>
+nnoremap <leader>sA :FloatermNew objdump -d -M intel ./build/main<CR>
+
+" ============================================================================
+" Gutentags 自动生成 tags
+" ============================================================================
+let g:gutentags_cache_dir = expand('~/.cache/tags')
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px', '--c-kinds=+px']
+let g:gutentags_file_list_command = 'fd -t f'
+
+" ============================================================================
+" 文件类型设置
+" ============================================================================
+augroup filetype_settings
+  autocmd!
+  autocmd FileType c,cpp setlocal tabstop=4 shiftwidth=4 expandtab
+  autocmd FileType asm setlocal tabstop=8 shiftwidth=8 noexpandtab
+  autocmd FileType make setlocal noexpandtab
+  autocmd BufRead,BufNewFile *.s,*.S set filetype=asm
+  autocmd BufRead,BufNewFile *.cu,*.cuh set filetype=cuda
+augroup END
+
+" ============================================================================
+" 自定义命令（Ubuntu 专用）
+" ============================================================================
+command! PerfRecord FloatermNew perf record -g --call-graph=dwarf ./build/main
+command! PerfReport FloatermNew perf report
+command! FlameGraph  FloatermNew perf script | stackcollapse-perf.pl | flamegraph.pl > flame.svg
+command! Strace     FloatermNew strace -f -e trace=all ./build/main
+command! Ltrace     FloatermNew ltrace ./build/main
