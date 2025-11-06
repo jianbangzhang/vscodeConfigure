@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "cmake -S . -B build -DCMAKE_BUILD_TYPE='Debug' -DCMAKE_CUDA_COMPILER=/usr/local/cuda-12.2/bin/nvcc && cmake --build build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$nvcc"],
+      "detail": "Build CUDA project with CMake"
+    }
+  ]
+}

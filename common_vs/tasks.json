@@ -1,0 +1,33 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Current File",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "FILE='${file}'; EXT='${fileExtname}'; BASE='${fileBasenameNoExtension}'; DIR='${fileDirname}'; if [ \"$EXT\" = \".c\" ]; then gcc -g \"$FILE\" -o \"$DIR/${BASE}_c\"; elif [ \"$EXT\" = \".cpp\" ] || [ \"$EXT\" = \".cc\" ] || [ \"$EXT\" = \".cxx\" ]; then g++ -g -std=c++17 \"$FILE\" -o \"$DIR/${BASE}_cc\"; elif [ \"$EXT\" = \".cu\" ]; then nvcc -g -G \"$FILE\" -o \"$DIR/${BASE}_cu\"; else echo \"Unsupported file type: $EXT\"; exit 1; fi"
+            ],
+            "windows": {
+                "command": "powershell",
+                "args": [
+                    "-Command",
+                    "$file='${file}'; $ext='${fileExtname}'; $base='${fileBasenameNoExtension}'; $dir='${fileDirname}'; if ($ext -eq '.c') { gcc -g $file -o \"$dir/${base}_c.exe\" } elseif ($ext -in '.cpp','.cc','.cxx') { g++ -g -std=c++17 $file -o \"$dir/${base}_cc.exe\" } elseif ($ext -eq '.cu') { nvcc -g -G $file -o \"$dir/${base}_cu.exe\" } else { Write-Host \"Unsupported file type: $ext\"; exit 1 }"
+                ]
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "detail": "Auto-compile current file based on extension (debug mode)"
+        }
+    ]
+}

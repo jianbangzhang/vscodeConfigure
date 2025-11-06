@@ -1,0 +1,40 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Current File",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build Current File",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "linux": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "/usr/bin/gdb",
+                "program": "${fileDirname}/${fileBasenameNoExtension}_${fileExtname:1}"
+            },
+            "osx": {
+                "MIMode": "lldb",
+                "program": "${fileDirname}/${fileBasenameNoExtension}_${fileExtname:1}"
+            },
+            "windows": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "C:/MinGW/bin/gdb.exe",
+                "program": "${fileDirname}/${fileBasenameNoExtension}_${fileExtname:1}.exe"
+            }
+        }
+    ]
+}
